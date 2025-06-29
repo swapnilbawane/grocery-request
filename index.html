@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            font-weight: bold;
+        }
+        
+        .shop-name-section {
+            margin-bottom: 24px;
+        }
+        
+        .shop-name-section label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .shop-name-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .shop-name-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d1d5db;
+        }
+        
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 6px 8px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+        }
+        
+        .input-field:focus {
+            outline: 1px solid #10b981;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .quantity-input {
+            text-align: center;
+            width: 60px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .instructions {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .instructions p {
+            margin-bottom: 4px;
+        }
+        
+        /* Checkout Styles */
+        .checkout-container {
+            min-height: 100vh;
+            background: white;
+            padding: 20px;
+        }
+        
+        .checkout-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            padding: 32px;
+        }
+        
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .checkout-header p {
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .checkout-table {
+            border: 1px solid #374151;
+        }
+        
+        .checkout-table th,
+        .checkout-table td {
+            border: 1px solid #374151;
+            padding: 8px 12px;
+        }
+        
+        .checkout-table th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        
+        .checkout-footer {
+            margin-top: 24px;
+            text-align: center;
+        }
+        
+        .back-btn-container {
+            margin-top: 32px;
+            text-align: center;
+        }
+        
+        .screenshot-note {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Edit Mode -->
+        <div id="editMode">
+            <div class="card">
+                <div class="header">
+                    <h1>🛒 Grocery List Manager</h1>
+                </div>
+                
+                <div class="shop-name-section">
+                    <label for="shopName">Guest Name: </label>
+                    <input type="text" id="shopName" class="shop-name-input" value=" " placeholder="Enter guest name/address">
+                </div>
+                
+                <div class="table-container">
+                    <table id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Items</th>
+                                <th>Price Per Unit</th>
+                                <th>Weight</th>
+                                <th>Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <!-- Items will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="display: flex; gap: 16px;">
+                    <button class="btn btn-success" onclick="addItem()">
+                        ➕ Add Item
+                    </button>
+                    <button class="btn btn-primary" onclick="showCheckout()">
+                        📋 Checkout / Generate Order
+                    </button>
+                </div>
+                
+                <div class="instructions">
+                    <p>• Fill in your grocery items above</p>
+                    <p>• Click "Checkout" to generate a clean table for screenshots</p>
+                    <p>• Take a screenshot of the generated table and send it to your grocery shop</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Checkout Mode -->
+        <div id="checkoutMode" class="hidden">
+            <div class="checkout-card" id="checkoutTable">
+                <div class="checkout-header">
+                    <h1 id="checkoutShopName">Kirana - AMIT C-712</h1>
+                    <p>Grocery Order List</p>
+                    <p style="font-size: 12px;" id="orderDate"></p>
+                </div>
+                
+                <div class="table-container">
+                    <table class="checkout-table">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Items</th>
+                                <th>Price Per Unit</th>
+                                <th>Weight</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkoutTableBody">
+                            <!-- Checkout items will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="checkout-footer">
+                    <p style="font-size: 14px; color: #6b7280;" id="totalItems">Total Items: 0</p>
+                </div>
+            </div>
+            
+            <div class="back-btn-container">
+                <button class="btn btn-primary" onclick="backToEdit()">
+                    ← Back to Edit
+                </button>
+                <button class="btn btn-success" onclick="downloadAsPNG()" style="margin-left: 12px;">
+                    📥 Download as PNG
+                </button>
+                <p class="screenshot-note">Take a screenshot or download as PNG to send to your grocery shop</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let items = [
+            { id: 1, name: 'Rai राई', pricePerUnit: '', weight: '100 gms', quantity: 1 },
+            { id: 2, name: 'Britannia - Marie', pricePerUnit: 'Rs 45', weight: '', quantity: 1 },
+            { id: 3, name: 'KhadiSakhar खडीसाखर', pricePerUnit: '', weight: '100gms', quantity: 1 },
+            { id: 4, name: 'Tide Washing Powder', pricePerUnit: '1 kg', weight: '', quantity: 2 },
+            { id: 5, name: 'Vim Bar Pack of 4/5', pricePerUnit: '', weight: '', quantity: 1 },
+            { id: 6, name: 'Dheepham Til Puja Oil', pricePerUnit: '1 ltr', weight: '', quantity: 1 },
+            { id: 7, name: 'Dantkanti Toothpaste', pricePerUnit: '', weight: '100gms', quantity: 1 },
+            { id: 8, name: 'Dettol Soap', pricePerUnit: 'Rs 10', weight: '', quantity: 1 },
+            { id: 9, name: 'Listerine Cool mint Mouthwash', pricePerUnit: '250ml', weight: '', quantity: 1 },
+            { id: 10, name: 'Chitale Dahi : Expiry 6th July or after 6th July', pricePerUnit: '200gms or 400gms', weight: '', quantity: 1 },
+            { id: 11, name: 'Everest Micropore Tape 2 Inch', pricePerUnit: '', weight: '', quantity: 1 },
+            { id: 12, name: 'Hansaplast Washproof Band Aid', pricePerUnit: '', weight: '', quantity: 5 }
+        ];
+
+        function renderItems() {
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="text-align: center; font-weight: 500;">${index + 1}</td>
+                    <td>
+                        <input type="text" class="input-field" value="${item.name}" 
+                               onchange="updateItem(${item.id}, 'name', this.value)" 
+                               placeholder="Enter item name">
+                    </td>
+                    <td>
+                        <input type="text" class="input-field" value="${item.pricePerUnit}" 
+                               onchange="updateItem(${item.id}, 'pricePerUnit', this.value)" 
+                               placeholder="Rs 10 / 1kg">
+                    </td>
+                    <td>
+                        <input type="text" class="input-field" value="${item.weight}" 
+                               onchange="updateItem(${item.id}, 'weight', this.value)" 
+                               placeholder="100gms">
+                    </td>
+                    <td>
+                        <input type="number" class="input-field quantity-input" value="${item.quantity}" 
+                               onchange="updateItem(${item.id}, 'quantity', parseInt(this.value) || 1)" 
+                               min="1">
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-danger" onclick="removeItem(${item.id})" title="Remove item">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addItem() {
+            const newItem = {
+                id: Date.now(),
+                name: '',
+                pricePerUnit: '',
+                weight: '',
+                quantity: 1
+            };
+            items.push(newItem);
+            renderItems();
+        }
+
+        function removeItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderItems();
+        }
+
+        function updateItem(id, field, value) {
+            const item = items.find(item => item.id === id);
+            if (item) {
+                item[field] = value;
+            }
+        }
+
+        function showCheckout() {
+            const shopName = document.getElementById('shopName').value;
+            document.getElementById('checkoutShopName').textContent = shopName;
+            document.getElementById('orderDate').textContent = `Date: ${new Date().toLocaleDateString('en-IN')}`;
+            
+            const checkoutTBody = document.getElementById('checkoutTableBody');
+            checkoutTBody.innerHTML = '';
+            
+            const validItems = items.filter(item => item.name.trim());
+            
+            validItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td style="text-align: center;">${item.pricePerUnit || '-'}</td>
+                    <td style="text-align: center;">${item.weight || '-'}</td>
+                    <td style="text-align: center;">${item.quantity}</td>
+                `;
+                checkoutTBody.appendChild(row);
+            });
+            
+            document.getElementById('totalItems').textContent = `Total Items: ${validItems.length}`;
+            
+            document.getElementById('editMode').classList.add('hidden');
+            document.getElementById('checkoutMode').classList.remove('hidden');
+        }
+
+        function backToEdit() {
+            document.getElementById('checkoutMode').classList.add('hidden');
+            document.getElementById('editMode').classList.remove('hidden');
+        }
+
+        // Initialize the app
+        renderItems();
+    </script>
+
+    <!-- HTML2Canvas Library for PNG Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        function downloadAsPNG() {
+            const element = document.getElementById('checkoutTable');
+            const downloadBtn = document.querySelector('button[onclick="downloadAsPNG()"]');
+            
+            // Disable button and show loading
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '⏳ Generating...';
+            
+            // Configure html2canvas options
+            const options = {
+                backgroundColor: '#ffffff',
+                scale: 2, // Higher quality
+                useCORS: true,
+                allowTaint: true,
+                width: element.offsetWidth,
+                height: element.offsetHeight,
+                scrollX: 0,
+                scrollY: 0
+            };
+            
+            html2canvas(element, options).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                const shopName = document.getElementById('shopName').value || 'Grocery-List';
+                const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+                
+                link.download = `${shopName.replace(/[^a-zA-Z0-9]/g, '-')}-${date}.png`;
+                link.href = canvas.toDataURL('image/png');
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Reset button
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '📥 Download as PNG';
+            }).catch(error => {
+                console.error('Error generating PNG:', error);
+                alert('Error generating PNG. Please try taking a screenshot instead.');
+                
+                // Reset button
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '📥 Download as PNG';
+            });
+        }
+    </script>
+</body>
+</html>
